@@ -1,4 +1,10 @@
 <?php
+/*
+ * @Author: DingBing 
+ * @Date: 2017-12-11 15:49:44 
+ * @Last Modified by: DingBing
+ * @Last Modified time: 2017-12-11 15:53:22
+ */
 
 namespace App\Http\Controllers\Admin;
 
@@ -19,7 +25,7 @@ class NavigateController extends Controller
      */
     protected function formatValidationErrors(Validator $validator)
     {
-        return ajax_exception(implode("\n",$validator->errors()->all()));
+        return \App\Tools\ajax_exception(implode("\n",$validator->errors()->all()));
     }
 
     /**
@@ -33,6 +39,7 @@ class NavigateController extends Controller
         $result = \App\Navigate::where('nav_name','like',"%$navName%")->orderBy('nav_id','desc')->paginate(Config::get('constants.page_size'));
         return view('Admin/Navigate/show',['result'=>$result,'navName'=>$navName]);
     }
+
 
     /**
      * 切换导航前台展示状态
@@ -57,16 +64,16 @@ class NavigateController extends Controller
             $navigate->is_open = $value;
             if($navigate->save())
             {
-                return ajax_success();
+                return \App\Tools\ajax_success();
             }
             else
             {
-                return ajax_error();
+                return \App\Tools\ajax_error();
             }
         }
         catch(\Exception $e)
         {
-            return ajax_exception($e->getMessage());
+            return \App\Tools\ajax_exception($e->getMessage());
         }
 
     }
@@ -85,17 +92,16 @@ class NavigateController extends Controller
                 'nav_name' => 'required|unique:navigates|max:30',
                 'jump_url' => 'required',
             ]);
-            $all = $request->all();
-            $all['is_open'] = $request->has('is_open') ? 1 : 0;
+
             // 数据入库
             $result = \App\Navigate::create($all);
             if($result)
             {   
-                return ajax_success();
+                return \App\Tools\ajax_success();
             }
             else
             {
-                return ajax_error();
+                return \App\Tools\ajax_error();
             }
         }
         return view('Admin/Navigate/create');
@@ -132,18 +138,18 @@ class NavigateController extends Controller
                 $result = \App\Navigate::where('nav_id',$nid)->update($all);
                 if($result)
                 {   
-                    return ajax_success();
+                    return \App\Tools\ajax_success();
                 }
                 else
                 {
-                    return ajax_error();
+                    return \App\Tools\ajax_error();
                 }
             }
             return view('Admin/Navigate/update',['navigate'=>$navigate]);
         }
         catch(\Exception $e)
         {
-            return ajax_exception($e->getMessage());
+            return \App\Tools\ajax_exception($e->getMessage());
         }
     }
 
@@ -166,18 +172,18 @@ class NavigateController extends Controller
 
                 if($res = $navigate->delete())
                 {
-                    return ajax_success();
+                    return \App\Tools\ajax_success();
                 }
                 else
                 {
-                    return ajax_error();
+                    return \App\Tools\ajax_error();
                 }
 
             }
         }
         catch(\Exception $e)
         {
-            return ajax_exception($e->getMessage());
+            return \App\Tools\ajax_exception($e->getMessage());
         }
     }
 
@@ -193,18 +199,18 @@ class NavigateController extends Controller
                 $navids = $request->input('navids');
                 if($result = \App\Navigate::destroy($navids))
                 {
-                    return ajax_success();
+                    return \App\Tools\ajax_success();
                 }
                 else
                 {
-                    return ajax_error();
+                    return \App\Tools\ajax_error();
                 }
 
             }
         }
         catch(\Exception $e)
         {
-            return ajax_exception($e->getMessage());
+            return \App\Tools\ajax_exception($e->getMessage());
         }        
     }
 }
